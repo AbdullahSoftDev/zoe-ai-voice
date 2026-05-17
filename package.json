@@ -9,6 +9,7 @@
   "build:dev": "vite build --mode development",
   "preview": "vite preview",
   "lint": "eslint .",
+  "deploy": "wrangler deploy dist/server/index.js",
   "format": "prettier --write ."
 },
   "dependencies": {
