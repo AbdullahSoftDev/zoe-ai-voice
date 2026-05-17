@@ -1,0 +1,423 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* =========================================================
+   ZOE — AI Voice Agent
+   Dark : Aria-inspired cosmic teal + violet (image 1)
+   Light: Zoe iridescent sunset / pink (images 2-4)
+   Shared: Aria animation system (ripples, shimmer, fade-up,
+   glow-pulse, orbit, aurora, wave-bar, card-3d, btn-glow)
+   ========================================================= */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-pill: 999px;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-glow: var(--primary-glow);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-glass: var(--glass);
+  --color-glass-border: var(--glass-border);
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 3s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 3s ease-in-out infinite;
+  --animate-glow-pulse: glow-pulse 3s ease-in-out infinite;
+  --animate-orb-spin: orb-spin 18s linear infinite;
+  --animate-ripple: ripple 1.6s ease-out infinite;
+  --animate-aurora: aurora 14s ease-in-out infinite;
+  --animate-twinkle: twinkle 3s ease-in-out infinite;
+  --animate-shimmer: shimmer 4s linear infinite;
+  --animate-rise: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.5s ease-out both;
+  --animate-fade-up: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-scale-in: scale-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-slide-in-left: slide-in-left 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-slide-in-right: slide-in-right 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-wave: wave 1.2s ease-in-out infinite;
+  --animate-wave-bar: wave-bar 1s ease-in-out infinite;
+  --animate-tilt: tilt 8s ease-in-out infinite;
+}
+
+/* ============ LIGHT — iridescent sunset / pink ============ */
+:root {
+  --radius: 1.25rem;
+
+  --background: oklch(0.97 0.02 320);
+  --foreground: oklch(0.18 0.04 290);
+
+  --card: oklch(1 0 0 / 0.55);
+  --card-foreground: oklch(0.2 0.04 290);
+
+  --popover: oklch(0.99 0.01 320);
+  --popover-foreground: oklch(0.18 0.04 290);
+
+  --primary: oklch(0.62 0.24 305);
+  --primary-foreground: oklch(0.99 0.01 320);
+  --primary-glow: oklch(0.78 0.18 320);
+
+  --secondary: oklch(0.92 0.06 30);
+  --secondary-foreground: oklch(0.25 0.05 290);
+
+  --muted: oklch(0.94 0.03 320);
+  --muted-foreground: oklch(0.45 0.04 290);
+
+  --accent: oklch(0.74 0.18 35);
+  --accent-foreground: oklch(0.18 0.04 290);
+
+  --destructive: oklch(0.6 0.24 25);
+  --destructive-foreground: oklch(0.99 0.01 320);
+
+  --border: oklch(0.85 0.04 320 / 0.5);
+  --input: oklch(0.9 0.03 320 / 0.6);
+  --ring: oklch(0.62 0.24 305);
+
+  --glass: oklch(1 0 0 / 0.45);
+  --glass-border: oklch(1 0 0 / 0.55);
+
+  --gradient-bg: radial-gradient(ellipse at 20% 10%, oklch(0.85 0.13 30 / 0.7), transparent 55%),
+    radial-gradient(ellipse at 80% 20%, oklch(0.78 0.16 320 / 0.7), transparent 55%),
+    radial-gradient(ellipse at 50% 90%, oklch(0.82 0.14 290 / 0.7), transparent 60%),
+    linear-gradient(180deg, oklch(0.96 0.03 320), oklch(0.93 0.05 30));
+  --gradient-hero: var(--gradient-bg);
+  --gradient-primary: linear-gradient(135deg, oklch(0.65 0.24 305), oklch(0.74 0.2 30));
+  --gradient-orb: radial-gradient(circle at 30% 30%, oklch(0.92 0.1 320), oklch(0.7 0.24 305) 55%, oklch(0.65 0.22 30) 100%);
+  --gradient-button: var(--gradient-primary);
+  --shadow-glow: 0 0 60px oklch(0.65 0.24 305 / 0.4), 0 0 120px oklch(0.74 0.2 30 / 0.2);
+  --shadow-elegant: 0 20px 60px -20px oklch(0.45 0.18 305 / 0.4);
+  --transition-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ============ DARK — Aria cosmic teal + violet ============ */
+.dark {
+  --background: oklch(0.16 0.03 250);
+  --foreground: oklch(0.97 0.01 230);
+
+  --card: oklch(0.21 0.035 255 / 0.6);
+  --card-foreground: oklch(0.97 0.01 230);
+
+  --popover: oklch(0.20 0.035 255);
+  --popover-foreground: oklch(0.97 0.01 230);
+
+  --primary: oklch(0.78 0.18 195);
+  --primary-foreground: oklch(0.15 0.04 250);
+  --primary-glow: oklch(0.85 0.18 200);
+
+  --secondary: oklch(0.27 0.05 260);
+  --secondary-foreground: oklch(0.97 0.01 230);
+
+  --muted: oklch(0.25 0.04 258);
+  --muted-foreground: oklch(0.74 0.03 240);
+
+  --accent: oklch(0.72 0.22 320);
+  --accent-foreground: oklch(0.15 0.04 250);
+
+  --destructive: oklch(0.65 0.24 25);
+  --destructive-foreground: oklch(0.98 0 0);
+
+  --border: oklch(0.35 0.04 260 / 0.4);
+  --input: oklch(0.28 0.04 258 / 0.6);
+  --ring: oklch(0.78 0.18 195);
+
+  --glass: oklch(0.20 0.04 258 / 0.55);
+  --glass-border: oklch(0.55 0.05 260 / 0.22);
+
+  --gradient-bg: radial-gradient(ellipse at top, oklch(0.30 0.12 270 / 0.7), transparent 60%),
+    radial-gradient(ellipse at bottom right, oklch(0.30 0.18 200 / 0.5), transparent 55%),
+    linear-gradient(180deg, oklch(0.13 0.03 250), oklch(0.10 0.04 260));
+  --gradient-hero: var(--gradient-bg);
+  --gradient-primary: linear-gradient(135deg, oklch(0.78 0.18 195), oklch(0.72 0.22 320));
+  --gradient-orb: radial-gradient(circle at 30% 30%, oklch(0.88 0.18 200), oklch(0.55 0.22 290) 60%, oklch(0.30 0.18 320) 100%);
+  --gradient-button: var(--gradient-primary);
+  --shadow-glow: 0 0 60px oklch(0.78 0.18 195 / 0.45), 0 0 120px oklch(0.72 0.22 320 / 0.25);
+  --shadow-elegant: 0 20px 60px -20px oklch(0.10 0.05 260 / 0.6);
+  --transition-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html, body { min-height: 100%; }
+  body {
+    color: var(--color-foreground);
+    background: var(--gradient-bg);
+    background-attachment: fixed;
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+}
+
+/* ===== Utilities ===== */
+@layer utilities {
+  .glass {
+    background: var(--color-glass);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--color-glass-border);
+    box-shadow: 0 8px 32px -8px oklch(0 0 0 / 0.25), 0 0 0 1px oklch(1 0 0 / 0.06) inset;
+  }
+  .glass-strong {
+    background: color-mix(in oklab, var(--color-glass) 70%, transparent);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid var(--color-glass-border);
+    box-shadow: var(--shadow-glow);
+  }
+  .glass-pill {
+    background: var(--color-glass);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid var(--color-glass-border);
+    border-radius: 999px;
+  }
+  .text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .shimmer-text {
+    background: linear-gradient(90deg,
+      var(--primary),
+      var(--primary-glow),
+      var(--accent),
+      var(--primary));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 4s linear infinite;
+  }
+  .btn-glow {
+    background: var(--gradient-primary);
+    background-size: 200% 200%;
+    color: var(--color-primary-foreground);
+    animation: gradient-shift 6s ease infinite;
+    box-shadow: var(--shadow-glow);
+    transition: transform 0.25s var(--transition-smooth), box-shadow 0.25s var(--transition-smooth), filter 0.25s var(--transition-smooth);
+  }
+  .btn-glow:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.06); }
+  .btn-gradient {
+    background: var(--gradient-button);
+    color: var(--color-primary-foreground);
+    box-shadow: var(--shadow-glow);
+    transition: transform 0.25s var(--transition-smooth), box-shadow 0.25s var(--transition-smooth), filter 0.25s var(--transition-smooth);
+  }
+  .btn-gradient:hover { transform: translateY(-2px); filter: brightness(1.08); }
+  .aurora-bg {
+    position: fixed; inset: 0;
+    background: var(--gradient-bg);
+    background-attachment: fixed;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .ring-glow { box-shadow: 0 0 0 1px var(--color-glass-border), 0 0 40px -5px var(--color-primary); }
+
+  /* 3D card tilt on hover */
+  .card-3d {
+    transform-style: preserve-3d;
+    transition: transform 0.5s var(--transition-smooth), box-shadow 0.5s var(--transition-smooth);
+  }
+  .card-3d:hover {
+    transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateY(-4px);
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Magnetic button glow ring */
+  .glow-ring { position: relative; }
+  .glow-ring::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: var(--gradient-primary);
+    background-size: 200% 200%;
+    animation: gradient-shift 4s ease infinite;
+    filter: blur(8px);
+    opacity: 0.7;
+    z-index: -1;
+  }
+
+  /* Underline link */
+  .story-link {
+    position: relative;
+    display: inline-block;
+  }
+  .story-link::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 100%; height: 2px;
+    background: var(--color-primary);
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.3s var(--transition-smooth);
+  }
+  .story-link:hover::after { transform: scaleX(1); transform-origin: bottom left; }
+
+  /* Urdu typography */
+  .font-urdu {
+    font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', serif;
+    line-height: 2;
+    direction: rtl;
+  }
+
+  /* Cosmic background frame */
+  .cosmic-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .cosmic-bg .aurora {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(80px);
+    opacity: 0.55;
+  }
+  .cosmic-bg .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--color-foreground);
+    border-radius: 9999px;
+    box-shadow: 0 0 6px var(--color-foreground);
+  }
+}
+
+/* ===== Keyframes ===== */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 40px var(--color-primary), 0 0 80px var(--accent); filter: brightness(1); }
+  50% { box-shadow: 0 0 80px var(--color-primary), 0 0 160px var(--accent); filter: brightness(1.1); }
+}
+@keyframes glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 12px var(--color-primary)); }
+  50% { filter: drop-shadow(0 0 28px var(--accent)); }
+}
+@keyframes orb-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes ripple {
+  0% { transform: scale(0.8); opacity: 0.6; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes aurora {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); opacity: 0.55; }
+  50% { transform: translate3d(4%, -3%, 0) scale(1.15); opacity: 0.85; }
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+}
+@keyframes wave-bar {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+@keyframes tilt {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50% { transform: rotate(1.5deg); }
+}
+
+/* Aria mic visuals (kept from prior MicOrb so existing imports stay safe) */
+@keyframes mic-ripple {
+  0%   { transform: scale(0.6); opacity: 0.7; }
+  80%  { opacity: 0.05; }
+  100% { transform: scale(1.15); opacity: 0; }
+}
+@keyframes mic-orbit {
+  from { transform: translate(-50%, -50%) rotate(var(--start, 0deg)) translateX(var(--radius, 100px)) rotate(calc(-1 * var(--start, 0deg))); }
+  to   { transform: translate(-50%, -50%) rotate(calc(var(--start, 0deg) + 360deg)) translateX(var(--radius, 100px)) rotate(calc(-1 * (var(--start, 0deg) + 360deg))); }
+}
+@keyframes mic-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 var(--color-primary); }
+  50%      { transform: scale(1.04); box-shadow: 0 0 40px -8px var(--color-primary); }
+}
+
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-pulse-soft { animation: pulse-soft 3s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+.animate-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+.animate-orb-spin { animation: orb-spin 18s linear infinite; }
+.animate-ripple { animation: ripple 1.6s ease-out infinite; }
+.animate-aurora { animation: aurora 14s ease-in-out infinite; }
+.animate-twinkle { animation: twinkle 3s ease-in-out infinite; }
+.animate-shimmer { animation: shimmer 4s linear infinite; }
+.animate-fade-up { animation: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-fade-in { animation: fade-in 0.5s ease-out both; }
+.animate-scale-in { animation: scale-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-slide-in-left { animation: slide-in-left 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-slide-in-right { animation: slide-in-right 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-tilt { animation: tilt 8s ease-in-out infinite; }
+.animate-wave-bar { animation: wave-bar 1s ease-in-out infinite; transform-origin: center; }
+.animate-mic-pulse { animation: mic-pulse 2.6s ease-in-out infinite; }
