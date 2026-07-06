@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Mic, Sparkles, Globe2, Waves, ShieldCheck, Brain, LogOut, ArrowRight } from "lucide-react";
+import { Mic, Sparkles, Globe2, Waves, ShieldCheck, Brain, LogOut, ArrowRight, Users, MessageSquare } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 import { CosmicBg, VoiceOrb, Waveform } from "@/components/cosmic-bg";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { syncDeviceContacts } from '@/lib/contacts-sync';
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -17,6 +19,20 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   const { user, signOut } = useAuth();
   const name = user?.user_metadata?.full_name?.split(" ")[0] ?? user?.email?.split("@")[0] ?? "friend";
+
+  const handleSyncContacts = async () => {
+    if (!user) {
+      toast.error("Please sign in first");
+      return;
+    }
+    toast.info("Syncing contacts...");
+    const result = await syncDeviceContacts();
+    if (result.success) {
+      toast.success(`Synced ${result.count} contacts`);
+    } else {
+      toast.error(result.error || "Failed to sync contacts");
+    }
+  };
 
   return (
     <div className="min-h-screen overflow-hidden relative">
@@ -33,12 +49,26 @@ function HomePage() {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           {user ? (
-            <button
-              onClick={() => signOut()}
-              className="glass-pill flex h-10 items-center gap-2 px-4 text-sm transition-transform hover:scale-105"
-            >
-              <LogOut className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Sign out</span>
-            </button>
+            <>
+              <Link
+                to="/whatsapp"
+                className="glass-pill flex h-10 items-center gap-2 px-4 text-sm transition-transform hover:scale-105"
+              >
+                <MessageSquare className="h-3.5 w-3.5" /> <span className="hidden sm:inline">WhatsApp</span>
+              </Link>
+              <button
+                onClick={handleSyncContacts}
+                className="glass-pill flex h-10 items-center gap-2 px-4 text-sm transition-transform hover:scale-105"
+              >
+                <Users className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Sync Contacts</span>
+              </button>
+              <button
+                onClick={() => signOut()}
+                className="glass-pill flex h-10 items-center gap-2 px-4 text-sm transition-transform hover:scale-105"
+              >
+                <LogOut className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Sign out</span>
+              </button>
+            </>
           ) : (
             <Link
               to="/login"
@@ -82,6 +112,12 @@ function HomePage() {
                 className="px-7 py-3.5 rounded-full glass font-semibold hover:bg-white/5 hover:scale-105 transition-all"
               >
                 Send a message
+              </Link>
+              <Link
+                to="/whatsapp"
+                className="px-7 py-3.5 rounded-full glass font-semibold hover:bg-white/5 hover:scale-105 transition-all flex items-center gap-2"
+              >
+                <MessageSquare className="h-4 w-4" /> Connect WhatsApp
               </Link>
             </div>
             <div className="mt-10 max-w-md"><Waveform bars={36} /></div>

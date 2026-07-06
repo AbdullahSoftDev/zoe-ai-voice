@@ -1,40 +1,106 @@
-import { createContext, useContext, useState } from "react";
+// src/components/auth-provider.tsx
+import { createContext, useContext, useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
-/**
- * UI-only auth stub. The user will wire real auth (Supabase / Firebase)
- * later. Pages can keep importing { useAuth } unchanged.
- */
-type DemoUser = {
+type User = {
+  id: string;
   email: string;
   user_metadata: { full_name?: string };
 };
 
 type Ctx = {
-  user: DemoUser | null;
+  user: User | null;
   loading: boolean;
-  signIn: (email?: string) => void;
+  signIn: (email?: string, userId?: string) => void;
   signOut: () => void;
 };
 
 const AuthCtx = createContext<Ctx>({
   user: null,
-  loading: false,
+  loading: true,
   signIn: () => {},
   signOut: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  // UI-only auth stub: start signed-out so Sign in button shows correctly.
-  const [user, setUser] = useState<DemoUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        console.log('[Auth] Session check:', session?.user?.email);
+        console.log('[Auth] Session user ID:', session?.user?.id);
+        
+        if (session?.user) {
+          // ✅ Use the REAL user ID from Supabase
+          setUser({
+            id: session.user.id,
+            email: session.user.email || '',
+            user_metadata: { 
+              full_name: session.user.user_metadata?.full_name || 
+                         session.user.email?.split('@')[0] || 
+                         'User' 
+            }
+          });
+          console.log('[Auth] ✅ Session restored for:', session.user.email, 'ID:', session.user.id);
+        }
+      } catch (error) {
+        console.error('[Auth] Session check failed:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('[Auth] Auth state changed:', event);
+      
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || '',
+          user_metadata: { 
+            full_name: session.user.user_metadata?.full_name || 
+                       session.user.email?.split('@')[0] || 
+                       'User' 
+          }
+        });
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const signIn = (email?: string, userId?: string) => {
+    console.log('[Auth] signIn called with ID:', userId);
+    if (userId) {
+      setUser({
+        id: userId,
+        email: email || 'user@example.com',
+        user_metadata: { full_name: email?.split('@')[0] || 'User' }
+      });
+    }
+  };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
 
   return (
     <AuthCtx.Provider
       value={{
         user,
-        loading: false,
-        signIn: (email = "demo@zoe.app") =>
-          setUser({ email, user_metadata: { full_name: email.split("@")[0] } }),
-        signOut: () => setUser(null),
+        loading,
+        signIn,
+        signOut,
       }}
     >
       {children}

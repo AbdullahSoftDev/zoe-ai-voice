@@ -1,3 +1,4 @@
+// src/start.ts
 import { createStart, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
@@ -18,7 +19,12 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
   }
 });
 
+// Remove CSRF middleware - it's not available in this version
+// const csrfMiddleware = createCsrfMiddleware({
+//   filter: (ctx) => ctx.handlerType === 'serverFn',
+// });
+
 export const startInstance = createStart(() => ({
-  requestMiddleware: [errorMiddleware],
+  requestMiddleware: [errorMiddleware], // Remove csrfMiddleware from here
   functionMiddleware: [attachSupabaseAuth],
 }));
