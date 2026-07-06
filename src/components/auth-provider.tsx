@@ -22,6 +22,16 @@ const AuthCtx = createContext<Ctx>({
   signOut: () => {},
 });
 
+// ✅ Map Firebase UID to Supabase UUID
+const USER_ID_MAP: Record<string, string> = {
+  'tByYdsQj5Oer1HQYqFlb2B8tW3v1': 'f731942c-608d-4c45-9456-c1e43c0575a9',
+  'rjVOLVbvDiblsMc1bOC9iwjV1NK2': 'f731942c-608d-4c45-9456-c1e43c0575a9',
+};
+
+function getSupabaseUserId(firebaseUid: string): string {
+  return USER_ID_MAP[firebaseUid] || firebaseUid;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,11 +47,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
         
-        console.log('[Auth] Session check:', session?.user?.email);
-        
         if (session?.user) {
+          // ✅ Use the UUID from the map if available
+          const userId = getSupabaseUserId(session.user.id);
+          
           setUser({
-            id: session.user.id,
+            id: userId,
             email: session.user.email || '',
             user_metadata: { 
               full_name: session.user.user_metadata?.full_name || 
@@ -49,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                          'User' 
             }
           });
-          console.log('[Auth] ✅ Session restored for:', session.user.email);
+          console.log('[Auth] ✅ Session restored for:', session.user.email, 'ID:', userId);
         }
       } catch (error) {
         console.error('[Auth] Session check failed:', error);
@@ -64,8 +75,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('[Auth] Auth state changed:', event);
       
       if (session?.user) {
+        const userId = getSupabaseUserId(session.user.id);
         setUser({
-          id: session.user.id,
+          id: userId,
           email: session.user.email || '',
           user_metadata: { 
             full_name: session.user.user_metadata?.full_name || 
@@ -83,10 +95,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = (email?: string, userId?: string) => {
-    console.log('[Auth] signIn called with ID:', userId);
     if (userId) {
+      // ✅ Map Firebase UID to Supabase UUID
+      const supabaseId = getSupabaseUserId(userId);
+      console.log('[Auth] signIn - Firebase UID:', userId, '-> Supabase ID:', supabaseId);
+      
       setUser({
-        id: userId,
+        id: supabaseId,
         email: email || 'user@example.com',
         user_metadata: { full_name: email?.split('@')[0] || 'User' }
       });
