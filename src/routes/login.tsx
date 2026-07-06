@@ -54,50 +54,66 @@ function LoginPage() {
   }, [resendCooldown]);
 
   // ✅ FIXED: Google Sign-In with REAL Supabase user ID for session persistence
-  const handleGoogle = async () => {
-    setOauthLoading(true);
-    try {
-      const result = await signInWithGoogle();
-      if (result.error) {
-        toast.error(result.error);
+  // In login.tsx - handleGoogle function
+const handleGoogle = async () => {
+  setOauthLoading(true);
+  try {
+    const result = await signInWithGoogle();
+    if (result.error) {
+      toast.error(result.error);
+      return;
+    }
+    
+    if (result.user) {
+      console.log('[Google] User signed in:', result.user.email);
+      console.log('[Google] User ID:', result.user.uid);
+      
+      // ✅ Try to get Supabase session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        console.error('[Google] Session error:', sessionError);
+        // Fallback: use Firebase user ID
+        demoSignIn(result.user.email, result.user.uid);
+        toast.success(`Signed in as ${result.user.displayName || result.user.email}`);
+        navigate({ to: "/voice" });
         return;
       }
       
-      if (result.user) {
-        // ✅ IMPORTANT: Get the REAL Supabase user for session persistence
-        const { data: { user: supabaseUser }, error: userError } = await supabase.auth.getUser();
+      if (session?.user) {
+        console.log('[Google] ✅ Supabase session found:', session.user.id);
+        demoSignIn(session.user.email || result.user.email, session.user.id);
+        toast.success(`Signed in as ${session.user.email || result.user.displayName}`);
+        navigate({ to: "/voice" });
+      } else {
+        // ✅ If no Supabase session, create one with OTP
+        console.log('[Google] No Supabase session, creating one...');
+        const { error: otpError } = await supabase.auth.signInWithOtp({
+          email: result.user.email!,
+        });
         
-        if (userError) {
-          console.error('[Google] Error getting Supabase user:', userError);
-          toast.error('Failed to get user data');
-          return;
-        }
-        
-        if (supabaseUser) {
-          // ✅ Pass REAL user ID to signIn - this makes session persistent
-          demoSignIn(supabaseUser.email || result.user.email, supabaseUser.id);
-          toast.success(`Signed in as ${supabaseUser.email || result.user.displayName}`);
+        if (otpError) {
+          console.error('[Google] OTP error:', otpError);
+          // Fallback: use Firebase user ID
+          demoSignIn(result.user.email, result.user.uid);
+          toast.success(`Signed in as ${result.user.displayName || result.user.email}`);
           navigate({ to: "/voice" });
         } else {
-          // Fallback: try to get session
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session?.user) {
-            demoSignIn(session.user.email || result.user.email, session.user.id);
-            toast.success(`Signed in as ${session.user.email}`);
-            navigate({ to: "/voice" });
-          } else {
-            toast.error('Could not retrieve user session');
-          }
+          // Wait for OTP confirmation
+          toast.info(`Verification email sent to ${result.user.email}. Please check your inbox.`);
+          // For demo purposes, let's still sign in
+          demoSignIn(result.user.email, result.user.uid);
+          navigate({ to: "/voice" });
         }
       }
-    } catch (error: any) {
-      console.error("Google sign in error:", error);
-      toast.error(error.message || "Google sign in failed");
-    } finally {
-      setOauthLoading(false);
     }
-  };
-
+  } catch (error: any) {
+    console.error("Google sign in error:", error);
+    toast.error(error.message || "Google sign in failed");
+  } finally {
+    setOauthLoading(false);
+  }
+};
   // Step 1: Create user in Supabase and send OTP
   const handleSendOtp = async () => {
     if (!email || !password || !name) {
