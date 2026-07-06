@@ -55,10 +55,12 @@ function LoginPage() {
 
   // ✅ FIXED: Google Sign-In with REAL Supabase user ID for session persistence
   // In login.tsx - handleGoogle function
+// In login.tsx - handleGoogle function
 const handleGoogle = async () => {
   setOauthLoading(true);
   try {
     const result = await signInWithGoogle();
+    
     if (result.error) {
       toast.error(result.error);
       return;
@@ -68,12 +70,20 @@ const handleGoogle = async () => {
       console.log('[Google] User signed in:', result.user.email);
       console.log('[Google] User ID:', result.user.uid);
       
+      if (result.user.requiresOtp) {
+        toast.info(`Verification email sent to ${result.user.email}. Please check your inbox.`);
+        // Still sign in with the user info we have
+        demoSignIn(result.user.email, result.user.uid);
+        toast.success(`Welcome ${result.user.displayName || result.user.email}!`);
+        navigate({ to: "/voice" });
+        return;
+      }
+      
       // ✅ Try to get Supabase session
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError) {
         console.error('[Google] Session error:', sessionError);
-        // Fallback: use Firebase user ID
         demoSignIn(result.user.email, result.user.uid);
         toast.success(`Signed in as ${result.user.displayName || result.user.email}`);
         navigate({ to: "/voice" });
@@ -86,22 +96,19 @@ const handleGoogle = async () => {
         toast.success(`Signed in as ${session.user.email || result.user.displayName}`);
         navigate({ to: "/voice" });
       } else {
-        // ✅ If no Supabase session, create one with OTP
-        console.log('[Google] No Supabase session, creating one...');
+        // ✅ Try to sign in with OTP if no session
+        console.log('[Google] No Supabase session, sending OTP...');
         const { error: otpError } = await supabase.auth.signInWithOtp({
           email: result.user.email!,
         });
         
         if (otpError) {
           console.error('[Google] OTP error:', otpError);
-          // Fallback: use Firebase user ID
           demoSignIn(result.user.email, result.user.uid);
           toast.success(`Signed in as ${result.user.displayName || result.user.email}`);
           navigate({ to: "/voice" });
         } else {
-          // Wait for OTP confirmation
-          toast.info(`Verification email sent to ${result.user.email}. Please check your inbox.`);
-          // For demo purposes, let's still sign in
+          toast.info(`Verification email sent to ${result.user.email}`);
           demoSignIn(result.user.email, result.user.uid);
           navigate({ to: "/voice" });
         }
@@ -113,8 +120,7 @@ const handleGoogle = async () => {
   } finally {
     setOauthLoading(false);
   }
-};
-  // Step 1: Create user in Supabase and send OTP
+};  // Step 1: Create user in Supabase and send OTP
   const handleSendOtp = async () => {
     if (!email || !password || !name) {
       toast.error("Please fill in all fields");
